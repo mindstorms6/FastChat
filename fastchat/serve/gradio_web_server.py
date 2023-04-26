@@ -251,7 +251,7 @@ def http_bot(state, model_selector, temperature, max_new_tokens, request: gr.Req
             headers=headers,
             json=pload,
             stream=True,
-            timeout=20,
+            timeout=60,
         )
         for chunk in response.iter_lines(decode_unicode=False, delimiter=b"\0"):
             if chunk:
