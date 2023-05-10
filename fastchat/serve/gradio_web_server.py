@@ -153,7 +153,7 @@ def add_text(state, text, request: gr.Request):
                 no_change_btn,
             ) * 5
 
-    text = text[:1536]  # Hard cut-off
+#     text = text[:1536]  # Hard cut-off
     state.append_message(state.roles[0], text)
     state.append_message(state.roles[1], None)
     state.skip_next = False
