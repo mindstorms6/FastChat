@@ -408,7 +408,7 @@ async def create_completion(request: CompletionRequest):
 
     payload = get_gen_params(
         request.model,
-        request.prompt,
+        request.prompt if not isinstance(ini_list1, list) else request.prompt[0],
         temperature=request.temperature,
         top_p=request.top_p,
         max_tokens=request.max_tokens,
@@ -594,6 +594,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--allowed-headers", type=json.loads, default=["*"], help="allowed headers"
     )
+    parser.add_argument(
+        "--log-level", type=str, default=["info"], help="Log level"
+    )
     args = parser.parse_args()
 
     app.add_middleware(
@@ -605,6 +608,6 @@ if __name__ == "__main__":
     )
     app_settings.controller_address = args.controller_address
 
+    uvicorn.run("fastchat.serve.openai_api_server:app", host=args.host, port=args.port, log_level=args.log_level, reload=True)
     logger.debug(f"==== args ====\n{args}")
-
-    uvicorn.run("fastchat.serve.openai_api_server:app", host=args.host, port=args.port, log_level="info", reload=True)
+    logger.debug(f"==== app_settings ====\n{app_settings}")
