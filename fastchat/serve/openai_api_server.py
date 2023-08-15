@@ -813,13 +813,9 @@ if __name__ == "__main__":
         "--allowed-headers", type=json.loads, default=["*"], help="allowed headers"
     )
     parser.add_argument(
-<<<<<<< HEAD
-        "--log-level", type=str, default=["info"], help="Log level"
-=======
         "--api-keys",
         type=lambda s: s.split(","),
         help="Optional list of comma separated API keys",
->>>>>>> 22a31bdfa68dcc85857c68fd0e977ae9df216b52
     )
     args = parser.parse_args()
 
@@ -833,12 +829,6 @@ if __name__ == "__main__":
     app_settings.controller_address = args.controller_address
     app_settings.api_keys = args.api_keys
 
-<<<<<<< HEAD
-    uvicorn.run("fastchat.serve.openai_api_server:app", host=args.host, port=args.port, log_level=args.log_level, reload=True)
-    logger.debug(f"==== args ====\n{args}")
-    logger.debug(f"==== app_settings ====\n{app_settings}")
-=======
     logger.info(f"args: {args}")
 
     uvicorn.run(app, host=args.host, port=args.port, log_level="info")
->>>>>>> 22a31bdfa68dcc85857c68fd0e977ae9df216b52
