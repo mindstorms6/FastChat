@@ -5,6 +5,7 @@ import time
 import shortuuid
 from pydantic import BaseModel, Field
 
+
 class ErrorResponse(BaseModel):
     object: str = "error"
     message: str
@@ -35,18 +36,21 @@ class ModelCard(BaseModel):
     parent: Optional[str] = None
     permission: List[ModelPermission] = []
 
+
 class ModelList(BaseModel):
     object: str = "list"
     data: List[ModelCard] = []
+
 
 class UsageInfo(BaseModel):
     prompt_tokens: int = 0
     total_tokens: int = 0
     completion_tokens: Optional[int] = 0
 
+
 class ChatCompletionRequest(BaseModel):
     model: str
-    messages: List[Dict[str, str]]
+    messages: Union[str, List[Dict[str, str]]]
     temperature: Optional[float] = 0.7
     top_p: Optional[float] = 1.0
     n: Optional[int] = 1
@@ -66,7 +70,8 @@ class ChatMessage(BaseModel):
 class ChatCompletionResponseChoice(BaseModel):
     index: int
     message: ChatMessage
-    finish_reason: Optional[Literal["stop", "length"]]
+    finish_reason: Optional[Literal["stop", "length"]] = None
+
 
 class ChatCompletionResponse(BaseModel):
     id: str = Field(default_factory=lambda: f"chatcmpl-{shortuuid.random()}")
@@ -85,7 +90,7 @@ class DeltaMessage(BaseModel):
 class ChatCompletionResponseStreamChoice(BaseModel):
     index: int
     delta: DeltaMessage
-    finish_reason: Optional[Literal["stop", "length"]]
+    finish_reason: Optional[Literal["stop", "length"]] = None
 
 
 class ChatCompletionStreamResponse(BaseModel):
@@ -96,9 +101,30 @@ class ChatCompletionStreamResponse(BaseModel):
     choices: List[ChatCompletionResponseStreamChoice]
 
 
-class EmbeddingsRequest(BaseModel):
+class TokenCheckRequestItem(BaseModel):
     model: str
-    input: str
+    prompt: str
+    max_tokens: int
+
+
+class TokenCheckRequest(BaseModel):
+    prompts: List[TokenCheckRequestItem]
+
+
+class TokenCheckResponseItem(BaseModel):
+    fits: bool
+    tokenCount: int
+    contextLength: int
+
+
+class TokenCheckResponse(BaseModel):
+    prompts: List[TokenCheckResponseItem]
+
+
+class EmbeddingsRequest(BaseModel):
+    model: Optional[str] = None
+    engine: Optional[str] = None
+    input: Union[str, List[Any]]
     user: Optional[str] = None
 
 
@@ -111,11 +137,11 @@ class EmbeddingsResponse(BaseModel):
 
 class CompletionRequest(BaseModel):
     model: str
-    prompt: Union[str, List[str]]
+    prompt: Union[str, List[Any]]
     suffix: Optional[str] = None
     temperature: Optional[float] = 0.7
     n: Optional[int] = 1
-    max_tokens: Optional[int] = None
+    max_tokens: Optional[int] = 16
     stop: Optional[Union[str, List[str]]] = None
     stream: Optional[bool] = False
     top_p: Optional[float] = 1.0
@@ -130,7 +156,7 @@ class CompletionResponseChoice(BaseModel):
     index: int
     text: str
     logprobs: Optional[int] = None
-    finish_reason: Optional[Literal["stop", "length"]]
+    finish_reason: Optional[Literal["stop", "length"]] = None
 
 
 class CompletionResponse(BaseModel):
